@@ -150,3 +150,65 @@ ipcMain.handle('get-api-key', async () => {
   }
   return null;
 });
+
+ipcMain.handle('store-base-url', async (_, baseUrl: string) => {
+  const configPath = path.join(app.getPath('userData'), 'config.json');
+  try {
+    let config: Record<string, string> = {};
+    if (await fs.promises.access(configPath).then(() => true).catch(() => false)) {
+      const content = await fs.promises.readFile(configPath, 'utf-8');
+      config = JSON.parse(content);
+    }
+    config.baseUrl = baseUrl;
+    await fs.promises.writeFile(configPath, JSON.stringify(config, null, 2));
+    return true;
+  } catch (error) {
+    console.error('Error storing base URL:', error);
+    return false;
+  }
+});
+
+ipcMain.handle('get-base-url', async () => {
+  const configPath = path.join(app.getPath('userData'), 'config.json');
+  try {
+    if (await fs.promises.access(configPath).then(() => true).catch(() => false)) {
+      const content = await fs.promises.readFile(configPath, 'utf-8');
+      const config = JSON.parse(content);
+      return config.baseUrl || null;
+    }
+  } catch (error) {
+    console.error('Error getting base URL:', error);
+  }
+  return null;
+});
+
+ipcMain.handle('store-model-name', async (_, modelName: string) => {
+  const configPath = path.join(app.getPath('userData'), 'config.json');
+  try {
+    let config: Record<string, string> = {};
+    if (await fs.promises.access(configPath).then(() => true).catch(() => false)) {
+      const content = await fs.promises.readFile(configPath, 'utf-8');
+      config = JSON.parse(content);
+    }
+    config.modelName = modelName;
+    await fs.promises.writeFile(configPath, JSON.stringify(config, null, 2));
+    return true;
+  } catch (error) {
+    console.error('Error storing model name:', error);
+    return false;
+  }
+});
+
+ipcMain.handle('get-model-name', async () => {
+  const configPath = path.join(app.getPath('userData'), 'config.json');
+  try {
+    if (await fs.promises.access(configPath).then(() => true).catch(() => false)) {
+      const content = await fs.promises.readFile(configPath, 'utf-8');
+      const config = JSON.parse(content);
+      return config.modelName || null;
+    }
+  } catch (error) {
+    console.error('Error getting model name:', error);
+  }
+  return null;
+});

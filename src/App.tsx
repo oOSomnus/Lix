@@ -4,7 +4,7 @@ import { PdfViewer } from './components/pdf-viewer/PdfViewer';
 import { ChatPanel } from './components/chat/ChatPanel';
 import { useStore } from './stores/store';
 import { Separator } from './components/ui/separator';
-import { Menu } from 'lucide-react';
+import { PanelLeftClose, PanelLeftOpen, PanelRightClose, PanelRightOpen } from 'lucide-react';
 
 // Build file tree from flat file list
 const buildFileTree = (files: any[], basePath: string): any[] => {
@@ -70,20 +70,34 @@ function App() {
     selectedFile,
     loadPdf,
     setApiKey,
+    setBaseUrl,
+    setModelName,
+    fileTreeCollapsed,
+    pdfViewerCollapsed,
+    toggleFileTreeCollapse,
+    togglePdfViewerCollapse,
   } = useStore();
 
-  // Load API key on mount
+  // Load config on mount
   useEffect(() => {
-    const loadApiKey = async () => {
+    const loadConfig = async () => {
       if (window.electronAPI) {
         const key = await window.electronAPI.getApiKey();
         if (key) {
           setApiKey(key);
         }
+        const baseUrl = await window.electronAPI.getBaseUrl();
+        if (baseUrl) {
+          setBaseUrl(baseUrl);
+        }
+        const modelName = await window.electronAPI.getModelName();
+        if (modelName) {
+          setModelName(modelName);
+        }
       }
     };
-    loadApiKey();
-  }, [setApiKey]);
+    loadConfig();
+  }, [setApiKey, setBaseUrl, setModelName]);
 
   // Load PDF when file is selected
   useEffect(() => {
@@ -117,30 +131,58 @@ function App() {
 
   return (
     <div className="flex h-screen w-screen bg-white overflow-hidden relative">
-      {/* Left Sidebar - File Tree (256px) */}
-      <div className="w-[256px] flex-shrink-0 bg-[#0a0a0a] border-r border-[#262626] flex flex-col">
-        <FileTree onOpenFolder={handleOpenFolder} />
+      {/* Left Sidebar - File Tree (256px or 0 when collapsed) */}
+      {!fileTreeCollapsed ? (
+        <>
+          <div className="w-64 flex-shrink-0 bg-[#0a0a0a] border-r border-[#262626] flex flex-col">
+            <FileTree onOpenFolder={handleOpenFolder} />
+          </div>
+          {/* Collapse button */}
+          <button
+            onClick={toggleFileTreeCollapse}
+            className="absolute left-64 top-1/2 -translate-y-1/2 -translate-x-1/2 w-6 h-6 bg-[#262626] rounded-full flex items-center justify-center hover:bg-[#404040] z-10 transition-all"
+          >
+            <PanelLeftClose className="w-3 h-3 text-[#a3a3a3]" />
+          </button>
+        </>
+      ) : (
+        <button
+          onClick={toggleFileTreeCollapse}
+          className="absolute left-0 top-1/2 -translate-y-1/2 w-6 h-6 bg-[#262626] rounded-full flex items-center justify-center hover:bg-[#404040] z-10 transition-all"
+        >
+          <PanelLeftOpen className="w-3 h-3 text-[#a3a3a3]" />
+        </button>
+      )}
+
+      {/* Middle Panel - Chat (flexible) */}
+      <div className={`flex flex-col bg-white ${fileTreeCollapsed ? 'flex-1' : 'flex-1'}`}>
+        <ChatPanel />
       </div>
 
-      {/* Right Panel Container (1295px) */}
-      <div className="flex-1 relative overflow-hidden">
-        {/* Chat Panel - Left in right container (647.5px) */}
-        <div className="w-[647.5px] flex-shrink-0 h-full">
-          <ChatPanel />
-        </div>
+      <Separator orientation="vertical" />
 
-        <Separator orientation="vertical" />
-
-        {/* PDF Viewer - Right in right container (647.5px) */}
-        <div className="absolute right-0 top-0 w-[647.5px] h-full">
-          <PdfViewer />
-        </div>
-      </div>
-
-      {/* Menu Button */}
-      <button className="absolute top-4 left-4 w-9 h-9 bg-[#0a0a0a] rounded-lg flex items-center justify-center shadow-[0px_10px_15px_0px_rgba(0,0,0,0.1),0px_4px_6px_0px_rgba(0,0,0,0.1)]">
-        <Menu className="w-5 h-5 text-white" />
-      </button>
+      {/* Right Panel - PDF Viewer (flexible or 0 when collapsed) */}
+      {!pdfViewerCollapsed ? (
+        <>
+          <div className="flex-1 bg-[#fafafa] relative">
+            <PdfViewer />
+            {/* Collapse button */}
+            <button
+              onClick={togglePdfViewerCollapse}
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-6 h-6 bg-[#262626] rounded-full flex items-center justify-center hover:bg-[#404040] z-10 transition-all"
+            >
+              <PanelRightClose className="w-3 h-3 text-[#a3a3a3]" />
+            </button>
+          </div>
+        </>
+      ) : (
+        <button
+          onClick={togglePdfViewerCollapse}
+          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-6 h-6 bg-[#262626] rounded-full flex items-center justify-center hover:bg-[#404040] z-10 transition-all"
+        >
+          <PanelRightOpen className="w-3 h-3 text-[#a3a3a3]" />
+        </button>
+      )}
     </div>
   );
 }

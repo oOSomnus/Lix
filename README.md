@@ -8,6 +8,8 @@
 - 📄 **PDF 预览** - 内置 PDF 查看器，支持翻页和缩放
 - 🤖 **AI 对话** - 集成 OpenAI API，基于 PDF 内容进行智能问答
 - 🎨 **现代 UI** - 基于 shadcn/ui 组件库，精美的深色/浅色主题
+- 🔄 **灵活布局** - 可折叠的文件树和 PDF 预览面板，自适应窗口大小
+- ⚙️ **自定义配置** - 支持自定义 Base URL 和模型名称，兼容 OpenAI 及其他兼容 API
 
 ## 技术栈
 
@@ -125,17 +127,26 @@ Lix/
 ### 4. AI 对话
 
 1. 首次使用时点击 "Set API Key" 设置 OpenAI API Key
-2. 在输入框中输入问题，AI 将基于当前 PDF 内容回答
-3. 点击 "+" 按钮可以清空对话历史
+2. 点击聊天面板右上角的设置图标可以配置 Base URL 和模型名称
+3. 在输入框中输入问题，AI 将基于当前 PDF 内容回答
+4. 支持自定义 OpenAI 兼容的 API（如 DeepSeek、Ollama 等）
+5. 点击 "+" 按钮可以清空对话历史
 
 ## 配置
 
-### OpenAI API Key
+### AI 设置
 
-API Key 会安全存储在本地配置文件中：
+所有 AI 相关配置会安全存储在本地配置文件中：
 - Windows: `%APPDATA%/lix/config.json`
 - macOS: `~/Library/Application Support/lix/config.json`
 - Linux: `~/.config/lix/config.json`
+
+配置项包括：
+- **API Key**: OpenAI 或兼容 API 的密钥
+- **Base URL**: API 端点地址（默认: `https://api.openai.com/v1`）
+- **模型名称**: 使用的模型名称（默认: `gpt-4o-mini`）
+
+可通过聊天面板右上角的设置图标进行修改。
 
 ## 许可证
 

@@ -32,20 +32,26 @@ Note: `pnpm dev` uses `vite-plugin-electron` which requires a GUI display server
 
 The app uses Electron's contextBridge for secure communication between main and renderer processes:
 
-- **electron/main.ts**: Main process with IPC handlers (`ipcMain.handle`) for file system operations (select-folder, read-directory, get-file-buffer, store/get-api-key)
+- **electron/main.ts**: Main process with IPC handlers for file system operations (select-folder, read-directory, get-file-buffer) and config persistence (store/get-api-key, store/get-base-url, store/get-model-name)
 - **electron/preload.ts**: Exposes `window.electronAPI` to renderer process via `contextBridge`
-- **Renderer process**: Accesses `window.electronAPI` (types defined in preload.ts) for file system access
+- **Renderer process**: Accesses `window.electronAPI` (types defined in preload.ts) for file system access and config management
 
 Files are read as base64 strings (`get-file-buffer`) to enable react-pdf rendering without direct file access.
+
+Config is stored in user data directory (`~/.config/lix/config.json` on Linux) and includes apiKey, baseUrl, and modelName.
 
 ### State Management (Zustand)
 
 `src/stores/store.ts` is the single source of truth using Zustand. Key state domains:
 
-- **File tree**: `folderPath`, `files`, `selectedFile`, `toggleFolder`, `selectFile`
-- **PDF viewer**: `pdfFile`, `pdfBuffer`, `currentPage`, `totalPages`, `zoomLevel`, `next/prev/zoomIn/zoomOut`
+- **File tree**: `folderPath`, `files`, `selectedFile`, `fileTreeCollapsed`, `toggleFolder`, `selectFile`, `toggleFileTreeCollapse`
+- **PDF viewer**: `pdfFile`, `pdfBuffer`, `currentPage`, `totalPages`, `zoomLevel`, `pdfViewerCollapsed`, `next/prev/zoomIn/zoomOut`, `togglePdfViewerCollapse`
 - **Chat**: `messages`, `isTyping`, `currentPdfName`, `addMessage`, `clearMessages`
-- **Config**: `apiKey`, `setApiKey`
+- **Config**: `apiKey`, `baseUrl`, `modelName`, `setApiKey`, `setBaseUrl`, `setModelName`
+
+Default values:
+- `baseUrl`: `https://api.openai.com/v1`
+- `modelName`: `gpt-4o-mini`
 
 The store is used directly via `useStore()` hooks throughout components.
 
@@ -68,20 +74,25 @@ The FileTree component recursively renders nodes, using the `expanded` state to 
 
 ### Three-Column Layout
 
-`src/App.tsx` renders the main layout:
-- Left: 256px fixed width (FileTree)
-- Middle: `flex-1`, `min-w-[400px]` (PdfViewer)
-- Right: `flex-1`, `min-w-[300px]`, `max-w-[500px]` (ChatPanel)
+`src/App.tsx` renders the main layout with flexible sizing and collapsible panels:
+- Left: FileTree panel (256px wide, collapsible with toggle button)
+- Middle: ChatPanel (flex-1, always visible)
+- Right: PDF Viewer (flex-1, collapsible with toggle button)
+
+Panel collapse state is managed in store via `fileTreeCollapsed` and `pdfViewerCollapsed`. Collapse buttons use `PanelLeftClose/PanelLeftOpen` and `PanelRightClose/PanelRightOpen` icons from lucide-react.
 
 Separators use Radix UI's `Separator` component between columns.
 
 ### OpenAI Integration
 
 `src/lib/openai.ts` wraps the OpenAI SDK. Key points:
-- Uses `gpt-4o-mini` model
+- Model name is configurable via store (default: `gpt-4o-mini`)
+- Base URL is configurable via store (default: `https://api.openai.com/v1`) - supports OpenAI-compatible APIs
 - System prompt is in Chinese, instructs AI to answer based on PDF content
 - `dangerouslyAllowBrowser: true` is set (acceptable for Electron app with context isolation)
 - Messages from the store's `messages` array are passed with their role/content
+
+AI settings can be configured via the Settings modal in ChatPanel (click Settings icon in header). Settings persist to Electron storage.
 
 ### UI Components
 

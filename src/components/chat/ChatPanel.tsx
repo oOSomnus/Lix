@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Send, Bot } from 'lucide-react';
+import { Send, Bot, Settings } from 'lucide-react';
 import { useStore } from '@/stores/store';
 import { ChatMessage } from './ChatMessage';
 import { Button } from '@/components/ui/button';
@@ -16,11 +16,16 @@ export const ChatPanel: React.FC = () => {
     addMessage,
     setIsTyping,
     apiKey,
+    baseUrl,
+    modelName,
   } = useStore();
 
   const [input, setInput] = useState('');
   const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState(false);
   const [tempApiKey, setTempApiKey] = useState('');
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const [tempBaseUrl, setTempBaseUrl] = useState('');
+  const [tempModelName, setTempModelName] = useState('');
 
   useEffect(() => {
     // Auto-scroll to bottom
@@ -44,7 +49,7 @@ export const ChatPanel: React.FC = () => {
 
     setIsTyping(true);
     try {
-      const response = await chatWithOpenAI(apiKey, '', messages);
+      const response = await chatWithOpenAI(apiKey, baseUrl, modelName, '', messages);
       addMessage({ role: 'assistant', content: response });
     } catch (error) {
       console.error('Error sending message:', error);
@@ -67,6 +72,9 @@ export const ChatPanel: React.FC = () => {
   const handleApiKeySave = () => {
     if (tempApiKey.trim()) {
       useStore.getState().setApiKey(tempApiKey.trim());
+      if (window.electronAPI) {
+        window.electronAPI.storeApiKey(tempApiKey.trim());
+      }
       setIsApiKeyModalOpen(false);
       setTempApiKey('');
     }
@@ -75,11 +83,24 @@ export const ChatPanel: React.FC = () => {
   return (
     <div className="flex flex-col h-full bg-white">
       {/* Header */}
-      <div className="bg-white border-b border-[#e5e5e5] h-[84px] px-6 py-4 flex flex-col gap-1 shrink-0">
-        <h2 className="font-medium text-[18px] leading-7 text-[#0a0a0a]">Chat</h2>
-        {currentPdfName && (
-          <p className="text-[14px] leading-5 text-[#737373]">{currentPdfName}</p>
-        )}
+      <div className="bg-white border-b border-[#e5e5e5] h-[84px] px-6 py-4 flex items-center justify-between shrink-0">
+        <div className="flex flex-col gap-1">
+          <h2 className="font-medium text-[18px] leading-7 text-[#0a0a0a]">Chat</h2>
+          {currentPdfName && (
+            <p className="text-[14px] leading-5 text-[#737373]">{currentPdfName}</p>
+          )}
+        </div>
+        <button
+          onClick={() => {
+            setIsSettingsModalOpen(true);
+            setTempBaseUrl(baseUrl);
+            setTempModelName(modelName);
+          }}
+          className="text-[#a3a3a3] hover:text-[#0a0a0a] transition-colors"
+          title="Settings"
+        >
+          <Settings className="w-5 h-5" />
+        </button>
       </div>
 
       {/* Messages */}
@@ -184,6 +205,72 @@ export const ChatPanel: React.FC = () => {
                 Cancel
               </Button>
               <Button onClick={handleApiKeySave}>Save</Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Settings Modal */}
+      {isSettingsModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-96 shadow-lg">
+            <h3 className="text-lg font-medium text-[#0a0a0a] mb-4">
+              AI Settings
+            </h3>
+            <div className="space-y-4 mb-6">
+              <div>
+                <label className="block text-sm font-medium text-[#737373] mb-2">
+                  Base URL
+                </label>
+                <Input
+                  type="text"
+                  placeholder="https://api.openai.com/v1"
+                  value={tempBaseUrl}
+                  onChange={(e) => setTempBaseUrl(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#737373] mb-2">
+                  Model Name
+                </label>
+                <Input
+                  type="text"
+                  placeholder="gpt-4o-mini"
+                  value={tempModelName}
+                  onChange={(e) => setTempModelName(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="flex gap-2 justify-end">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setIsSettingsModalOpen(false);
+                  setTempBaseUrl('');
+                  setTempModelName('');
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={() => {
+                  if (tempBaseUrl.trim()) {
+                    useStore.getState().setBaseUrl(tempBaseUrl.trim());
+                    if (window.electronAPI) {
+                      window.electronAPI.storeBaseUrl(tempBaseUrl.trim());
+                    }
+                  }
+                  if (tempModelName.trim()) {
+                    useStore.getState().setModelName(tempModelName.trim());
+                    if (window.electronAPI) {
+                      window.electronAPI.storeModelName(tempModelName.trim());
+                    }
+                  }
+                  setIsSettingsModalOpen(false);
+                }}
+              >
+                Save
+              </Button>
             </div>
           </div>
         </div>

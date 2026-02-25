@@ -22,6 +22,7 @@ interface Store {
   folderPath: string | null;
   files: FileNode[];
   selectedFile: string | null;
+  fileTreeCollapsed: boolean;
 
   // PDF viewer
   pdfFile: string | null;
@@ -29,6 +30,7 @@ interface Store {
   currentPage: number;
   totalPages: number;
   zoomLevel: number;
+  pdfViewerCollapsed: boolean;
 
   // Chat
   messages: Message[];
@@ -37,6 +39,8 @@ interface Store {
 
   // OpenAI config
   apiKey: string | null;
+  baseUrl: string;
+  modelName: string;
 
   // Actions
   setFolderPath: (path: string) => void;
@@ -55,7 +59,11 @@ interface Store {
   clearMessages: () => void;
   setIsTyping: (typing: boolean) => void;
   setApiKey: (key: string) => void;
+  setBaseUrl: (url: string) => void;
+  setModelName: (name: string) => void;
   resetPdf: () => void;
+  toggleFileTreeCollapse: () => void;
+  togglePdfViewerCollapse: () => void;
 }
 
 const initialZoomLevels = [0.5, 0.75, 1, 1.25, 1.5, 2];
@@ -66,15 +74,19 @@ export const useStore = create<Store>((set) => ({
   folderPath: null,
   files: [],
   selectedFile: null,
+  fileTreeCollapsed: false,
   pdfFile: null,
   pdfBuffer: null,
   currentPage: 1,
   totalPages: 0,
   zoomLevel: initialZoomLevels[defaultZoomIndex],
+  pdfViewerCollapsed: false,
   messages: [],
   isTyping: false,
   currentPdfName: null,
   apiKey: null,
+  baseUrl: 'https://api.openai.com/v1',
+  modelName: 'gpt-4o-mini',
 
   // Actions
   setFolderPath: (path) => set({ folderPath: path }),
@@ -161,6 +173,10 @@ export const useStore = create<Store>((set) => ({
 
   setApiKey: (key) => set({ apiKey: key }),
 
+  setBaseUrl: (url) => set({ baseUrl: url }),
+
+  setModelName: (name) => set({ modelName: name }),
+
   resetPdf: () =>
     set({
       pdfFile: null,
@@ -169,4 +185,10 @@ export const useStore = create<Store>((set) => ({
       totalPages: 0,
       currentPdfName: null,
     }),
+
+  toggleFileTreeCollapse: () =>
+    set((state) => ({ fileTreeCollapsed: !state.fileTreeCollapsed })),
+
+  togglePdfViewerCollapse: () =>
+    set((state) => ({ pdfViewerCollapsed: !state.pdfViewerCollapsed })),
 }));

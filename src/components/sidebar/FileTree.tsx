@@ -26,7 +26,7 @@ const FileNode: React.FC<FileNodeProps> = ({ node, level }) => {
 
   const getIcon = () => {
     if (isFolder) {
-      return <FileText className="w-4 h-4" />;
+      return isExpanded ? <FolderOpen className="w-4 h-4" /> : <Folder className="w-4 h-4" />;
     }
     if (node.extension === '.pdf') {
       return <FileText className="w-4 h-4" />;
@@ -45,11 +45,6 @@ const FileNode: React.FC<FileNodeProps> = ({ node, level }) => {
       >
         {isFolder ? (
           <>
-            <Folder className="w-4 h-4 shrink-0" />
-            <FolderOpen className="w-4 h-4 shrink-0" />
-          </>
-        ) : (
-          <>
             {isExpanded ? (
               <ChevronDown className="w-4 h-4 shrink-0" />
             ) : (
@@ -57,6 +52,8 @@ const FileNode: React.FC<FileNodeProps> = ({ node, level }) => {
             )}
             {getIcon()}
           </>
+        ) : (
+          <>{getIcon()}</>
         )}
         <span
           className={`text-sm truncate ${
