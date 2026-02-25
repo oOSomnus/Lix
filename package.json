@@ -4,6 +4,10 @@
   "description": "AI-powered PDF manager",
   "main": "dist-electron/main.js",
   "type": "module",
+  "author": {
+    "name": "Lix Team",
+    "email": "team@lix.app"
+  },
   "scripts": {
     "dev": "vite",
     "dev:web": "vite --config vite.config.web.ts",
@@ -11,6 +15,9 @@
     "build:electron": "tsc -p electron/tsconfig.json",
     "preview": "vite preview",
     "dist": "pnpm build:electron && pnpm build && electron-builder",
+    "dist:win": "pnpm build:electron && pnpm build && electron-builder --win",
+    "dist:mac": "pnpm build:electron && pnpm build && electron-builder --mac",
+    "dist:linux": "pnpm build:electron && pnpm build && electron-builder --linux",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
@@ -53,22 +60,47 @@
     },
     "files": [
       "dist/**/*",
-      "dist-electron/**/*"
+      "dist-electron/**/*",
+      "package.json"
     ],
     "win": {
       "target": [
-        "nsis"
-      ]
+        {
+          "target": "zip",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "build/icon.ico",
+      "signingHashAlgorithms": [],
+      "signAndEditExecutable": false,
+      "fileAssociations": [],
+      "verifyUpdateCodeSignature": false
     },
     "mac": {
       "target": [
-        "dmg"
-      ]
+        {
+          "target": "dmg",
+          "arch": ["x64", "arm64"]
+        }
+      ],
+      "icon": "build/icon.icns",
+      "category": "public.app-category.productivity"
     },
     "linux": {
       "target": [
-        "AppImage"
-      ]
+        {
+          "target": "AppImage",
+          "arch": ["x64"]
+        },
+        {
+          "target": "deb",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "build/icon.png",
+      "category": "Utility",
+      "description": "AI-powered PDF manager",
+      "maintainer": "Lix Team <team@lix.app>"
     }
   }
 }

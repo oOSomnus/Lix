@@ -20,20 +20,45 @@
 
 ## 安装
 
-### 环境要求
+### macOS
+
+1. 下载 `Lix-0.1.0.dmg`
+2. 双击打开 DMG 文件
+3. 将 Lix 拖拽到 Applications 文件夹
+4. 在 Applications 中找到 Lix 并启动
+
+### Windows
+
+1. 下载 `Lix-0.1.0-win.zip`
+2. 解压 zip 文件到任意目录
+3. 运行解压目录中的 `Lix.exe`
+
+### Linux
+
+1. 下载 `Lix-0.1.0.AppImage`
+2. 添加执行权限：
+   ```bash
+   chmod +x Lix-0.1.0.AppImage
+   ```
+3. 运行：
+   ```bash
+   ./Lix-0.1.0.AppImage
+   ```
+
+### 从源码构建
+
+#### 环境要求
 
 - Node.js >= 18
 - pnpm >= 8
 
-### 安装依赖
+#### 安装依赖
 
 ```bash
 pnpm install
 ```
 
-## 使用
-
-### 开发模式
+#### 开发模式
 
 ```bash
 pnpm dev
@@ -41,19 +66,21 @@ pnpm dev
 
 应用将在开发模式下启动，包含热重载功能。
 
-### 构建应用
+#### 构建应用
 
 ```bash
 pnpm build
 ```
 
-### 打包分发
+#### 打包分发
 
 ```bash
+# 打包当前平台
 pnpm dist
-```
 
-打包后的应用将输出到 `dist` 目录，支持 Windows、macOS 和 Linux 平台。
+# 打包所有平台（需要对应平台环境）
+pnpm dist --mac --win --linux
+```
 
 ## 项目结构
 
