@@ -38,8 +38,8 @@ const FileNode: React.FC<FileNodeProps> = ({ node, level }) => {
     <div>
       <div
         onClick={handleClick}
-        className={`flex items-center gap-2 h-10 cursor-pointer ${
-          isSelected ? 'bg-[#262626]' : ''
+        className={`flex items-center gap-2 h-10 cursor-pointer transition-colors ${
+          isSelected ? 'bg-[#262626] text-[#fafafa]' : 'text-[#737373] hover:bg-[#171717]'
         }`}
         style={{ paddingLeft: `${level * 12 + 12}px` }}
       >
@@ -84,14 +84,14 @@ export const FileTree: React.FC<FileTreeProps> = ({ onOpenFolder }) => {
   return (
     <div className="flex flex-col h-full bg-[#0a0a0a]">
       {/* Header with "Lix" logo */}
-      <div className="h-[73px] border-b border-[#262626] flex items-center px-4 relative">
-        <h1 className="font-display font-medium text-2xl leading-8 text-[#fafafa] tracking-[-0.6px]">
+      <div className="h-[73px] border-b border-[#262626] flex items-center px-4 relative shrink-0">
+        <h1 className="font-display font-medium text-[24px] leading-8 text-[#fafafa] tracking-[-0.6px]">
           Lix
         </h1>
         {/* Open folder button */}
         <button
           onClick={onOpenFolder}
-          className="absolute right-4 top-1/2 -translate-y-1/2 text-[#a3a3a3] hover:text-white"
+          className="absolute right-4 top-1/2 -translate-y-1/2 text-[#737373] hover:text-[#fafafa] transition-colors"
           title="Open Folder"
         >
           <FolderOpenIcon className="w-5 h-5" />

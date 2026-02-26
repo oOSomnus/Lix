@@ -23,6 +23,7 @@ interface Store {
   files: FileNode[];
   selectedFile: string | null;
   fileTreeCollapsed: boolean;
+  fileTreeWidth: number;
 
   // PDF viewer
   pdfFile: string | null;
@@ -31,6 +32,7 @@ interface Store {
   totalPages: number;
   zoomLevel: number;
   pdfViewerCollapsed: boolean;
+  pdfViewerWidth: number;
 
   // Chat
   messages: Message[];
@@ -64,6 +66,8 @@ interface Store {
   resetPdf: () => void;
   toggleFileTreeCollapse: () => void;
   togglePdfViewerCollapse: () => void;
+  setFileTreeWidth: (width: number) => void;
+  setPdfViewerWidth: (width: number) => void;
 }
 
 const initialZoomLevels = [0.5, 0.75, 1, 1.25, 1.5, 2];
@@ -75,12 +79,14 @@ export const useStore = create<Store>((set) => ({
   files: [],
   selectedFile: null,
   fileTreeCollapsed: false,
+  fileTreeWidth: 255,
   pdfFile: null,
   pdfBuffer: null,
   currentPage: 1,
   totalPages: 0,
   zoomLevel: initialZoomLevels[defaultZoomIndex],
   pdfViewerCollapsed: false,
+  pdfViewerWidth: 648, // in pixels
   messages: [],
   isTyping: false,
   currentPdfName: null,
@@ -191,4 +197,8 @@ export const useStore = create<Store>((set) => ({
 
   togglePdfViewerCollapse: () =>
     set((state) => ({ pdfViewerCollapsed: !state.pdfViewerCollapsed })),
+
+  setFileTreeWidth: (width) => set({ fileTreeWidth: Math.max(150, Math.min(500, width)) }),
+
+  setPdfViewerWidth: (width) => set({ pdfViewerWidth: Math.max(200, Math.min(800, width)) }),
 }));

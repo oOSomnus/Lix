@@ -16,7 +16,7 @@ function createWindow() {
     minWidth: 1200,
     minHeight: 700,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(app.getAppPath(), 'dist-electron', 'preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
     },

@@ -4,6 +4,20 @@
 
 @layer base {
   :root {
+    --lix-black: #0a0a0a;
+    --lix-white: #fafafa;
+    --lix-100: #f5f5f5;
+    --lix-200: #e5e5e5;
+    --lix-300: #d4d4d4;
+    --lix-500: #737373;
+    --lix-700: #404040;
+    --lix-800: #262626;
+    --lix-radius: 8px;
+    --lix-shadow: 0px 20px 25px 0px rgba(0, 0, 0, 0.1), 0px 8px 10px 0px rgba(0, 0, 0, 0.1);
+    --lix-panel-header-h: 84px;
+    --lix-pdf-header-h: 104px;
+    --lix-chat-input-h: 79px;
+
     --background: 0 0% 100%;
     --foreground: 0 0% 4%;
     --card: 0 0% 100%;
@@ -53,6 +67,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
     font-family: 'Inter', system-ui, sans-serif;
@@ -68,4 +83,8 @@
 /* Font Classes */
 .font-display {
   font-family: 'Space Grotesk', system-ui, sans-serif;
+}
+
+.lix-card-shadow {
+  box-shadow: var(--lix-shadow);
 }

@@ -12,7 +12,7 @@
     "dev": "vite",
     "dev:web": "vite --config vite.config.web.ts",
     "build": "tsc && vite build",
-    "build:electron": "tsc -p electron/tsconfig.json",
+    "build:electron": "tsc -p electron/tsconfig.json && tsc -p electron/tsconfig.preload.json",
     "preview": "vite preview",
     "dist": "pnpm build:electron && pnpm build && electron-builder",
     "dist:win": "pnpm build:electron && pnpm build && electron-builder --win",
@@ -30,7 +30,7 @@
     "clsx": "^2.1.0",
     "lucide-react": "^0.344.0",
     "openai": "^4.28.0",
-    "pdfjs-dist": "^4.0.379",
+    "pdfjs-dist": "4.8.69",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-pdf": "^9.1.0",
@@ -67,7 +67,9 @@
       "target": [
         {
           "target": "zip",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         }
       ],
       "icon": "build/icon.ico",
@@ -80,7 +82,10 @@
       "target": [
         {
           "target": "dmg",
-          "arch": ["x64", "arm64"]
+          "arch": [
+            "x64",
+            "arm64"
+          ]
         }
       ],
       "icon": "build/icon.icns",
@@ -90,11 +95,15 @@
       "target": [
         {
           "target": "AppImage",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         },
         {
           "target": "deb",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         }
       ],
       "icon": "build/icon.png",

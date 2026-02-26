@@ -16,8 +16,8 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
 
   return (
     <div className={`flex gap-3 items-start ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
-      <Avatar className="w-8 h-8 flex-shrink-0">
-        <AvatarFallback className={isUser ? 'bg-blue-500' : 'bg-[#0a0a0a]'}>
+      <Avatar className="w-8 h-8 flex-shrink-0 bg-[#0a0a0a]">
+        <AvatarFallback className={isUser ? 'bg-[#404040] text-white text-xs' : 'bg-[#0a0a0a]'}>
           {isUser ? 'U' : <Bot className="w-4 h-4 text-white" />}
         </AvatarFallback>
       </Avatar>
@@ -25,7 +25,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
         <div
           className={`rounded-lg p-3 ${
             isUser
-              ? 'bg-blue-500 text-white'
+              ? 'bg-[#0a0a0a] text-white'
               : 'bg-[#f5f5f5] text-[#0a0a0a]'
           }`}
         >
